@@ -68,7 +68,7 @@ CREATE DATABASE driveflow;
 
    Edit `.env` with your database credentials:
    ```env
-   DATABASE_URL=postgresql://postgres:your_password@localhost:5432/driveflow
+   DATABASE_URL=postgresql://postgres:your_password@localhost:5434/driveflow
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
    PORT=5000
    NODE_ENV=development
@@ -152,7 +152,7 @@ CREATE DATABASE driveflow;
 
 - Check your `DATABASE_URL` in `backend/.env`:
   - Format: `postgresql://username:password@host:port/database`
-  - Default: `postgresql://postgres:password@localhost:5432/driveflow`
+  - Default: `postgresql://postgres:password@localhost:5434/driveflow`
 
 - Test connection manually:
   ```bash

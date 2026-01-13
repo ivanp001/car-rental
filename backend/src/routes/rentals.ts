@@ -39,4 +39,73 @@ const returnRentalValidation = [
 
 router.put('/:id/return', returnRentalValidation, returnRental);
 
+/**
+ * @swagger
+ * /api/rentals/{id}/return:
+ *   put:
+ *     summary: Return a rental car and calculate additional costs
+ *     tags: [Rentals]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Rental ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               endMileage:
+ *                 type: integer
+ *                 description: Final mileage reading
+ *               fuelLevel:
+ *                 type: integer
+ *                 minimum: 0
+ *                 maximum: 100
+ *                 description: Fuel level percentage
+ *     responses:
+ *       200:
+ *         description: Rental completed with cost calculation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 carId:
+ *                   type: string
+ *                 customerId:
+ *                   type: string
+ *                 startDate:
+ *                   type: string
+ *                 endDate:
+ *                   type: string
+ *                 totalPrice:
+ *                   type: number
+ *                 status:
+ *                   type: string
+ *                 startMileage:
+ *                   type: integer
+ *                 endMileage:
+ *                   type: integer
+ *                 returnFuelLevel:
+ *                   type: integer
+ *                 extraMileageCost:
+ *                   type: number
+ *                   description: Cost for mileage over 200km
+ *                 fuelCost:
+ *                   type: number
+ *                   description: Cost for fuel refill
+ *                 totalAdditionalCost:
+ *                   type: number
+ *                   description: Total additional costs
+ */
+
 export default router;

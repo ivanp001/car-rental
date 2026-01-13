@@ -35,4 +35,7 @@ export const mapRentalRowToRental = (row: RentalRow): Rental => ({
   startMileage: row.start_mileage,
   endMileage: row.end_mileage || undefined,
   returnFuelLevel: row.return_fuel_level || undefined,
+  extraMileageCost: parseFloat(row.extra_mileage_cost.toString()) || undefined,
+  fuelCost: parseFloat(row.fuel_cost.toString()) || undefined,
+  totalAdditionalCost: parseFloat(row.total_additional_cost.toString()) || undefined,
 });

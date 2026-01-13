@@ -57,8 +57,8 @@ export const DriveFlowAPI = {
   /**
    * Completes a rental, updates mileage/fuel, and frees the car.
    */
-  async returnRental(rentalId: string, endMileage: number, fuelLevel: number): Promise<void> {
-    await apiCall(`/rentals/${rentalId}/return`, {
+  async returnRental(rentalId: string, endMileage: number, fuelLevel: number): Promise<Rental> {
+    return apiCall<Rental>(`/rentals/${rentalId}/return`, {
       method: 'PUT',
       body: JSON.stringify({ endMileage, fuelLevel }),
     });

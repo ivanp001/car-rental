@@ -27,6 +27,29 @@ export const Rentals = () => {
   const [returnMileage, setReturnMileage] = useState('');
   const [returnFuel, setReturnFuel] = useState('');
 
+  // Calculated costs for return
+  const calculatedCosts = useMemo(() => {
+    if (!rentalToReturn || !returnMileage || !returnFuel) return null;
+    
+    const endMileage = parseInt(returnMileage);
+    const fuelLevel = parseInt(returnFuel);
+    
+    if (isNaN(endMileage) || isNaN(fuelLevel)) return null;
+    
+    const mileageDriven = endMileage - rentalToReturn.startMileage;
+    const extraMileageCost = Math.max(0, mileageDriven - 200) * 0.50; // $0.50 per km over 200km
+    const fuelUsed = (100 - fuelLevel) / 100 * 50; // Assume 50L tank
+    const fuelCost = fuelUsed * 2.50; // $2.50 per liter
+    const totalAdditionalCost = extraMileageCost + fuelCost;
+    
+    return {
+      extraMileageCost,
+      fuelCost,
+      totalAdditionalCost,
+      totalCost: (rentalToReturn.totalPrice || 0) + totalAdditionalCost
+    };
+  }, [rentalToReturn, returnMileage, returnFuel]);
+
   // Derived state for calculation
   const selectedCar = cars.find(c => c.id === selectedCarId);
   const availableCars = cars.filter(c => c.status === CarStatus.Available);
@@ -81,9 +104,10 @@ export const Rentals = () => {
   const handleReturnCar = async () => {
     if (!rentalToReturn || !returnMileage || !returnFuel) return;
     try {
-      await completeRental(rentalToReturn.id, parseInt(returnMileage), parseInt(returnFuel));
+      const updatedRental = await completeRental(rentalToReturn.id, parseInt(returnMileage), parseInt(returnFuel));
       setIsReturnOpen(false);
       setRentalToReturn(null);
+      // The rental will be automatically updated in the state via the db service
     } catch (error: any) {
       alert(error.message || "Failed to return vehicle. Please try again.");
     }
@@ -138,8 +162,68 @@ export const Rentals = () => {
           )}
         </CardContent>
       </Card>
-      
-      {/* Create Rental Wizard */}
+
+      {/* Completed Rentals List */}
+      {pastRentals.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Completed Rentals</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {pastRentals.map(rental => {
+                const car = cars.find(c => c.id === rental.carId);
+                const customer = customers.find(c => c.id === rental.customerId);
+                const totalCost = (rental.totalPrice || 0) + (rental.totalAdditionalCost || 0);
+                
+                return (
+                  <div key={rental.id} className="flex flex-col sm:flex-row items-center justify-between p-4 border rounded-lg border-slate-200 bg-slate-50/30">
+                    <div className="flex items-center gap-4 mb-4 sm:mb-0 w-full sm:w-auto">
+                      <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">
+                        {customer?.fullName.charAt(0)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-slate-900">{customer?.fullName}</div>
+                        <div className="text-sm text-slate-500">{car?.make} {car?.model} • {car?.plate}</div>
+                        <div className="text-xs text-slate-400 mt-1">
+                          {formatDate(rental.startDate)} - {formatDate(rental.endDate)}
+                        </div>
+                        <div className="text-xs text-slate-400">
+                          Mileage: {rental.startMileage}km → {rental.endMileage}km
+                          {rental.returnFuelLevel !== undefined && ` • Fuel: ${rental.returnFuelLevel}%`}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="text-sm font-medium text-slate-900">
+                        Base: {formatCurrency(rental.totalPrice || 0)}
+                      </div>
+                      {(rental.extraMileageCost || 0) > 0 && (
+                        <div className="text-xs text-amber-600">
+                          Extra Mileage: +{formatCurrency(rental.extraMileageCost || 0)}
+                        </div>
+                      )}
+                      {(rental.fuelCost || 0) > 0 && (
+                        <div className="text-xs text-blue-600">
+                          Fuel: +{formatCurrency(rental.fuelCost || 0)}
+                        </div>
+                      )}
+                      {totalCost > (rental.totalPrice || 0) && (
+                        <div className="text-sm font-bold text-green-600 border-t border-slate-200 pt-1 mt-1">
+                          Total: {formatCurrency(totalCost)}
+                        </div>
+                      )}
+                      <Badge variant="secondary" className="mt-1 bg-green-100 text-green-700">
+                        {rental.status}
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <Dialog 
         isOpen={isCreateOpen} 
         onClose={() => setIsCreateOpen(false)} 
@@ -278,6 +362,34 @@ export const Rentals = () => {
               onChange={e => setReturnFuel(e.target.value)} 
             />
           </div>
+          
+          {calculatedCosts && (
+            <div className="mt-6 p-4 bg-slate-100 rounded-lg space-y-2 border border-slate-200">
+              <h4 className="font-medium text-slate-900 mb-3">Cost Summary</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-600">Base Rental:</span>
+                  <span>{formatCurrency(rentalToReturn?.totalPrice || 0)}</span>
+                </div>
+                {calculatedCosts.extraMileageCost > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-amber-600">Extra Mileage:</span>
+                    <span className="text-amber-600">+{formatCurrency(calculatedCosts.extraMileageCost)}</span>
+                  </div>
+                )}
+                {calculatedCosts.fuelCost > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-blue-600">Fuel Refill:</span>
+                    <span className="text-blue-600">+{formatCurrency(calculatedCosts.fuelCost)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-bold text-lg pt-2 border-t border-slate-300">
+                  <span>Total Cost:</span>
+                  <span>{formatCurrency(calculatedCosts.totalCost)}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Dialog>
     </div>

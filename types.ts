@@ -43,6 +43,9 @@ export interface Rental {
   startMileage: number;
   endMileage?: number;
   returnFuelLevel?: number;
+  extraMileageCost?: number;
+  fuelCost?: number;
+  totalAdditionalCost?: number;
 }
 
 // Stats interface for the dashboard

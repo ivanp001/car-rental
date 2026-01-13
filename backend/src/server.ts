@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import { testConnection } from './config/database';
 
 // Import routes
@@ -10,6 +12,83 @@ import customersRoutes from './routes/customers';
 import rentalsRoutes from './routes/rentals';
 
 dotenv.config();
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'DriveFlow API',
+      version: '1.0.0',
+      description: 'Fleet Management System API',
+    },
+    servers: [
+      {
+        url: 'http://localhost:5001',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+      schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+            fullName: { type: 'string' },
+            role: { type: 'string' },
+          },
+        },
+        Car: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            make: { type: 'string' },
+            model: { type: 'string' },
+            year: { type: 'integer' },
+            plate: { type: 'string' },
+            status: { type: 'string' },
+            dailyRate: { type: 'number' },
+            mileage: { type: 'integer' },
+            fuelLevel: { type: 'integer' },
+            image: { type: 'string' },
+          },
+        },
+        Rental: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            carId: { type: 'string' },
+            customerId: { type: 'string' },
+            startDate: { type: 'string' },
+            endDate: { type: 'string' },
+            totalPrice: { type: 'number' },
+            status: { type: 'string' },
+            startMileage: { type: 'integer' },
+            endMileage: { type: 'integer' },
+            returnFuelLevel: { type: 'integer' },
+            extraMileageCost: { type: 'number' },
+            fuelCost: { type: 'number' },
+            totalAdditionalCost: { type: 'number' },
+          },
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ['./src/routes/*.ts'],
+};
+
+const swaggerSpecs = swaggerJsdoc(swaggerOptions);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,6 +117,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/cars', carsRoutes);
 app.use('/api/customers', customersRoutes);
 app.use('/api/rentals', rentalsRoutes);
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

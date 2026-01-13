@@ -55,6 +55,9 @@ CREATE TABLE IF NOT EXISTS rentals (
     start_mileage INTEGER NOT NULL CHECK (start_mileage >= 0),
     end_mileage INTEGER CHECK (end_mileage IS NULL OR end_mileage >= start_mileage),
     return_fuel_level INTEGER CHECK (return_fuel_level IS NULL OR (return_fuel_level >= 0 AND return_fuel_level <= 100)),
+    extra_mileage_cost DECIMAL(10, 2) DEFAULT 0 CHECK (extra_mileage_cost >= 0),
+    fuel_cost DECIMAL(10, 2) DEFAULT 0 CHECK (fuel_cost >= 0),
+    total_additional_cost DECIMAL(10, 2) DEFAULT 0 CHECK (total_additional_cost >= 0),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_dates CHECK (end_date >= start_date)
@@ -73,22 +76,14 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS '
 BEGIN
     NEW.updated_at = CURRENT_TIMESTAMP;
     RETURN NEW;
 END;
-$$ language 'plpgsql';
+' LANGUAGE plpgsql;
 
--- Triggers to automatically update updated_at
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_cars_updated_at BEFORE UPDATE ON cars
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_customers_updated_at BEFORE UPDATE ON customers
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_rentals_updated_at BEFORE UPDATE ON rentals
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Add cost columns to rentals table (for existing databases)
+ALTER TABLE rentals ADD COLUMN IF NOT EXISTS extra_mileage_cost DECIMAL(10, 2) DEFAULT 0 CHECK (extra_mileage_cost >= 0);
+ALTER TABLE rentals ADD COLUMN IF NOT EXISTS fuel_cost DECIMAL(10, 2) DEFAULT 0 CHECK (fuel_cost >= 0);
+ALTER TABLE rentals ADD COLUMN IF NOT EXISTS total_additional_cost DECIMAL(10, 2) DEFAULT 0 CHECK (total_additional_cost >= 0);

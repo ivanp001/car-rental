@@ -215,7 +215,7 @@ driveflow---fleet-management/
 
 ### Backend (.env)
 ```
-DATABASE_URL=postgresql://username:password@localhost:5432/driveflow
+DATABASE_URL=postgresql://username:password@localhost:5434/driveflow
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 PORT=5000
 CORS_ORIGIN=http://localhost:3000

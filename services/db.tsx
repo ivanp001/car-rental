@@ -7,7 +7,7 @@ interface DataContextType {
   customers: Customer[];
   rentals: Rental[];
   addRental: (rental: Rental) => Promise<void>;
-  completeRental: (rentalId: string, endMileage: number, fuelLevel: number) => Promise<void>;
+  completeRental: (rentalId: string, endMileage: number, fuelLevel: number) => Promise<Rental>;
   addCustomer: (customer: Customer) => Promise<void>;
   isLoading: boolean;
   refreshData: () => Promise<void>;
@@ -101,8 +101,10 @@ export const DataProvider = ({ children }: { children?: ReactNode }) => {
   const completeRental = async (rentalId: string, endMileage: number, fuelLevel: number) => {
     setIsLoading(true);
     try {
-      await DriveFlowAPI.returnRental(rentalId, endMileage, fuelLevel);
-      await refreshData();
+      const updatedRental = await DriveFlowAPI.returnRental(rentalId, endMileage, fuelLevel);
+      setRentals(prev => prev.map(r => r.id === rentalId ? updatedRental : r));
+      // Also update the car status to available
+      setCars(prev => prev.map(c => c.id === updatedRental.carId ? { ...c, status: 'available' as const, mileage: updatedRental.endMileage || c.mileage } : c));
     } catch (e: any) {
       console.error(e);
       throw new Error(e.message || "Failed to return vehicle. Please try again.");

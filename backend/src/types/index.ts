@@ -46,6 +46,9 @@ export interface Rental {
   startMileage: number;
   endMileage?: number;
   returnFuelLevel?: number;
+  extraMileageCost?: number;
+  fuelCost?: number;
+  totalAdditionalCost?: number;
 }
 
 export interface User {
@@ -60,9 +63,22 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  fullName: string;
+  role?: 'admin' | 'staff';
+}
+
 export interface LoginResponse {
   token: string;
   user: User;
+}
+
+export interface JWTPayload {
+  userId: string;
+  email: string;
+  role: 'admin' | 'staff';
 }
 
 // Database row types (with snake_case)
@@ -103,6 +119,9 @@ export interface RentalRow {
   start_mileage: number;
   end_mileage: number | null;
   return_fuel_level: number | null;
+  extra_mileage_cost: number;
+  fuel_cost: number;
+  total_additional_cost: number;
   created_at: Date;
   updated_at: Date;
 }

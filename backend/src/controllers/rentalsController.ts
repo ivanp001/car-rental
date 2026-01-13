@@ -123,13 +123,24 @@ export const returnRental = async (
       return res.status(400).json({ error: 'End mileage must be greater than or equal to start mileage' });
     }
 
-    // Update rental
+    // Calculate additional costs
+    const mileageDriven = endMileage - rental.start_mileage;
+    const extraMileageCost = Math.max(0, mileageDriven - 200) * 0.50; // $0.50 per km over 200km included
+    
+    // Assume fuel tank capacity is 50 liters and fuel price is $2.50 per liter
+    const fuelUsed = (100 - fuelLevel) / 100 * 50; // liters used
+    const fuelCost = fuelUsed * 2.50;
+    
+    const totalAdditionalCost = extraMileageCost + fuelCost;
+
+    // Update rental with costs
     const updatedRentalResult = await client.query(
       `UPDATE rentals 
-       SET status = $1, end_mileage = $2, return_fuel_level = $3
-       WHERE id = $4
+       SET status = $1, end_mileage = $2, return_fuel_level = $3, 
+           extra_mileage_cost = $4, fuel_cost = $5, total_additional_cost = $6
+       WHERE id = $7
        RETURNING *`,
-      [RentalStatus.Completed, endMileage, fuelLevel, id]
+      [RentalStatus.Completed, endMileage, fuelLevel, extraMileageCost, fuelCost, totalAdditionalCost, id]
     );
 
     // Update car status and condition

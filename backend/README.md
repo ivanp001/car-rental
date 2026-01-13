@@ -37,7 +37,7 @@ Node.js/Express TypeScript backend API server for the DriveFlow Fleet Management
 
    Edit `.env` and set your database connection:
    ```env
-   DATABASE_URL=postgresql://username:password@localhost:5432/driveflow
+   DATABASE_URL=postgresql://username:123789@localhost:5434/driveflow
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
    PORT=5000
    CORS_ORIGIN=http://localhost:3000

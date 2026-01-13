@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { query } from '../config/database';
-import { UserRow, LoginRequest, LoginResponse, User } from '../types';
-import { JWTPayload } from '../middleware/auth';
+import { UserRow, LoginRequest, RegisterRequest, LoginResponse, User, JWTPayload } from '../types';
 
 export const login = async (req: Request<{}, {}, LoginRequest>, res: Response) => {
   try {
@@ -43,7 +42,7 @@ export const login = async (req: Request<{}, {}, LoginRequest>, res: Response) =
     const payload: JWTPayload = {
       userId: user.id,
       email: user.email,
-      role: user.role,
+      role: user.role as 'admin' | 'staff',
     };
 
     const token = jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn });
@@ -65,7 +64,7 @@ export const login = async (req: Request<{}, {}, LoginRequest>, res: Response) =
   }
 };
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response) => {
   try {
     const { email, password, fullName, role = 'staff' } = req.body;
 
@@ -108,7 +107,7 @@ export const register = async (req: Request, res: Response) => {
     const payload: JWTPayload = {
       userId: newUser.id,
       email: newUser.email,
-      role: newUser.role,
+      role: newUser.role as 'admin' | 'staff',
     };
 
     const token = jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn });
