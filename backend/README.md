@@ -89,7 +89,7 @@ The server will start on `http://localhost:5000` (or the port specified in `.env
   {
     "email": "user@example.com",
     "password": "password123",
-    "fullName": "John Doe",
+    "fullName": "Brian Johnson",
     "role": "staff"
   }
   ```

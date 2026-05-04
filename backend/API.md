@@ -60,7 +60,7 @@ Register a new user account.
 {
   "email": "user@example.com",
   "password": "password123",
-  "fullName": "John Doe",
+  "fullName": "Brian Johnson",
   "role": "staff"
 }
 ```
@@ -72,7 +72,7 @@ Register a new user account.
   "user": {
     "id": "uuid",
     "email": "user@example.com",
-    "fullName": "John Doe",
+    "fullName": "Brian Johnson",
     "role": "staff"
   }
 }
@@ -187,8 +187,8 @@ Authorization: Bearer <token>
 [
   {
     "id": "uuid",
-    "fullName": "John Doe",
-    "email": "john.doe@example.com",
+    "fullName": "Brian Johnson",
+    "email": "brian.johnson@example.com",
     "phone": "+1 (555) 123-4567",
     "licenseNumber": "DL-99283-NY",
     "rentalHistoryCount": 5

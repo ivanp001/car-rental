@@ -22,7 +22,7 @@ ON CONFLICT (plate) DO NOTHING;
 
 -- Seed Customers
 INSERT INTO customers (id, full_name, email, phone, license_number, rental_history_count) VALUES
-('u0000000-0000-0000-0000-000000000001', 'John Doe', 'john.doe@example.com', '+1 (555) 123-4567', 'DL-99283-NY', 5),
+('u0000000-0000-0000-0000-000000000001', 'Brian Johnson', 'brian.johnson@example.com', '+1 (555) 123-4567', 'DL-99283-NY', 5),
 ('u0000000-0000-0000-0000-000000000002', 'Sarah Smith', 'sarah.s@example.com', '+1 (555) 987-6543', 'DL-11234-CA', 2),
 ('u0000000-0000-0000-0000-000000000003', 'Michael Chen', 'm.chen@tech.co', '+1 (555) 444-2222', 'DL-55112-TX', 12),
 ('u0000000-0000-0000-0000-000000000004', 'Emma Watson', 'emma.w@studio.net', '+1 (555) 333-1111', 'DL-77382-FL', 0)

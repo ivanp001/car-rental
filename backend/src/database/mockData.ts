@@ -77,8 +77,8 @@ export const MOCK_CARS = [
 export const MOCK_CUSTOMERS = [
   {
     id: 'u1',
-    fullName: 'John Doe',
-    email: 'john.doe@example.com',
+    fullName: 'Brian Johnson',
+    email: 'brian.johnson@example.com',
     phone: '+1 (555) 123-4567',
     licenseNumber: 'DL-99283-NY',
     rentalHistoryCount: 5
