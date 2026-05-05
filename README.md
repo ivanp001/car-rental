@@ -1,6 +1,8 @@
-# DriveFlow Backend API
+# DriveFlow app
 
-Node.js/Express TypeScript backend API server for the DriveFlow Fleet Management System.
+## At the beggining, technologies and installation overview, and at the bottom examples of homepage dashboard and other sections with seed data in thee app
+
+## Technologies:  Node.js/Express TypeScript backend API server for the DriveFlow Fleet Management System.
 
 ## Prerequisites
 
@@ -189,3 +191,22 @@ Validation errors include additional details:
 - Ensure PostgreSQL is properly secured
 - Use HTTPS in production
 - Implement rate limiting for production use
+
+
+##  Examples of different sections from this app: 
+
+#### Home page dashboard
+<img width="1359" height="722" alt="Screenshot_23" src="https://github.com/user-attachments/assets/d3a3ade2-6bee-4082-86fa-ef013cc80b3f" />
+
+#### Fleet management
+<img width="1358" height="723" alt="Screenshot_24" src="https://github.com/user-attachments/assets/faf35b3d-47e6-4e6e-bc11-0362961e929d" />
+
+#### Rentals
+<img width="1364" height="723" alt="Screenshot_25" src="https://github.com/user-attachments/assets/a8c3255d-2c2e-44c6-adef-179a0aee39d9" />
+
+#### Customers
+<img width="1356" height="723" alt="Screenshot_26" src="https://github.com/user-attachments/assets/a42e7006-d294-4c6c-bf34-7a66be462daf" />
+
+
+
+  
